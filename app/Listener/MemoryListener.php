@@ -17,6 +17,7 @@ use Hyperf\Event\Annotation\Listener;
 use Hyperf\Event\Contract\ListenerInterface;
 use Hyperf\Framework\Event\AfterWorkerStart;
 use Swoole\Coroutine;
+use Swoole\Server\Admin;
 
 #[Listener]
 class MemoryListener implements ListenerInterface
@@ -30,7 +31,7 @@ class MemoryListener implements ListenerInterface
     }
 
     /**
-     * @param QueryExecuted $event
+     * @param AfterWorkerStart $event
      */
     public function process(object $event): void
     {
@@ -44,5 +45,10 @@ class MemoryListener implements ListenerInterface
                 }
             );
         }
+
+
+        swoole_timer_tick(1000 * 60 * 3, function () use ($event) {
+            var_dump(gc_mem_caches());
+        });
     }
 }
